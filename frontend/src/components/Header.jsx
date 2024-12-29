@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ShoppingCart, Home, Package, ChevronDown, Sun, Moon } from 'lucide-react';
+import { ShoppingCart, Home, Package, ChevronDown, Sun, Moon, User } from 'lucide-react';
 
 const Header = () => {
   const [isProductsOpen, setIsProductsOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Added to track login status
 
   useEffect(() => {
     const handleScroll = () => {
@@ -57,6 +58,19 @@ const Header = () => {
               </div>
             )}
           </div>
+          {/* Changed this section to show Login or Profile based on isLoggedIn */}
+          {!isLoggedIn ? (
+            <Link to="/login" className="nav-link" onClick={() => setIsLoggedIn(true)}>
+              {/* Simulate login when clicked for this example */}
+              <User size={18} />
+              <span>Login</span>
+            </Link>
+          ) : (
+            <Link to="/profile" className="nav-link">
+              <User size={18} />
+              <span>Profile</span>
+            </Link>
+          )}
           <Link to="/cart" className="cart-button">
             <ShoppingCart size={18} />
             <span>Cart</span>
@@ -66,7 +80,7 @@ const Header = () => {
           </button>
         </nav>
       </div>
-      <style jsx>{`
+      <style>{`
         .header {
           background: linear-gradient(to right, #6d28d9, #4f46e5);
           color: white;
@@ -115,10 +129,11 @@ const Header = () => {
           text-decoration: none;
           padding: 0.5rem;
           border-radius: 0.25rem;
-          transition: background-color 0.3s ease;
+          transition: background-color 0.3s ease, color 0.3s ease;
         }
         .nav-link:hover, .dropdown-button:hover, .cart-button:hover, .theme-toggle:hover {
-          background-color: rgba(255, 255, 255, 0.1);
+          background-color: rgba(255, 255, 255, 0.2);
+          color: #f0f0f0;
         }
         .dropdown {
           position: relative;
@@ -179,23 +194,23 @@ const Header = () => {
             flex-wrap: wrap;
           }
         }
-        :global(body.dark-mode) {
+        body.dark-mode {
           background-color: #1a202c;
           color: #e2e8f0;
         }
-        :global(body.dark-mode) .header {
+        body.dark-mode .header {
           background: linear-gradient(to right, #4c1d95, #3c366b);
         }
-        :global(body.dark-mode) .dropdown-menu {
+        body.dark-mode .dropdown-menu {
           background-color: #2d3748;
         }
-        :global(body.dark-mode) .dropdown-item {
+        body.dark-mode .dropdown-item {
           color: #e2e8f0;
         }
-        :global(body.dark-mode) .dropdown-item:hover {
+        body.dark-mode .dropdown-item:hover {
           background-color: #4a5568;
         }
-        :global(body.dark-mode) .cart-button {
+        body.dark-mode .cart-button {
           background-color: #2d3748;
           color: #e2e8f0;
         }
@@ -205,4 +220,5 @@ const Header = () => {
 };
 
 export default Header;
+
 
