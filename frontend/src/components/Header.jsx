@@ -1,224 +1,183 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ShoppingCart, Home, Package, ChevronDown, Sun, Moon, User } from 'lucide-react';
+import { ShoppingCart, Home, Zap, ChevronDown, User } from 'lucide-react';
 
 const Header = () => {
   const [isProductsOpen, setIsProductsOpen] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Added to track login status
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+  const handleScroll = useCallback(() => {
+    setIsScrolled(window.scrollY > 20);
   }, []);
 
   useEffect(() => {
-    if (isDarkMode) {
-      document.body.classList.add('dark-mode');
-    } else {
-      document.body.classList.remove('dark-mode');
-    }
-  }, [isDarkMode]);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [handleScroll]);
+
+  const toggleProductsMenu = useCallback(() => {
+    setIsProductsOpen(!isProductsOpen);
+  }, [isProductsOpen]);
 
   return (
-    <header className={`header ${isScrolled ? 'scrolled' : ''}`}>
-      <div className="container">
-        <h1 className="logo">
-          <Link to="/" className="logo-link">
-            <span className="logo-icon">
-              <Package size={24} />
+    <header style={{
+      background: 'linear-gradient(135deg, #0099f7 0%, #00c9ff 100%)',
+      padding: isScrolled ? '0.5rem 0' : '1rem 0',
+      transition: 'all 0.3s ease',
+      boxShadow: isScrolled ? '0 2px 10px rgba(0, 0, 0, 0.1)' : 'none',
+    }}>
+      <div style={{
+        maxWidth: '1200px',
+        margin: '0 auto',
+        padding: '0 1rem',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+      }}>
+        <h1 style={{ margin: 0 }}>
+          <Link to="/" style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            color: 'white',
+            textDecoration: 'none',
+            fontSize: '1.5rem',
+            fontWeight: 'bold',
+            textShadow: '0 1px 2px rgba(0, 0, 0, 0.1)',
+          }}>
+            <span style={{
+              background: 'white',
+              color: '#0099f7',
+              borderRadius: '50%',
+              padding: '0.25rem',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+            }}>
+              <Zap size={24} />
             </span>
-            <span>Sparkly</span>
+            <span>ElectroNova</span>
           </Link>
         </h1>
-        <nav className="nav">
-          <Link to="/" className="nav-link">
+        <nav style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '1rem',
+        }}>
+          <NavLink to="/">
             <Home size={18} />
             <span>Home</span>
-          </Link>
-          <div className="dropdown">
+          </NavLink>
+          <div style={{ position: 'relative' }}>
             <button 
-              className="dropdown-button"
-              onClick={() => setIsProductsOpen(!isProductsOpen)}
+              onClick={toggleProductsMenu}
+              aria-haspopup="true"
+              aria-expanded={isProductsOpen}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.25rem',
+                color: 'white',
+                background: 'none',
+                border: 'none',
+                padding: '0.5rem',
+                borderRadius: '0.25rem',
+                cursor: 'pointer',
+                transition: 'background-color 0.3s ease',
+              }}
             >
-              <Package size={18} />
+              <Zap size={18} />
               <span>Products</span>
-              <ChevronDown size={14} className={`chevron ${isProductsOpen ? 'open' : ''}`} />
+              <ChevronDown size={14} style={{
+                transition: 'transform 0.3s ease',
+                transform: isProductsOpen ? 'rotate(180deg)' : 'rotate(0)',
+              }} />
             </button>
             {isProductsOpen && (
-              <div className="dropdown-menu">
-                <Link to="/products" className="dropdown-item">All Products</Link>
-                <Link to="/products/new" className="dropdown-item">New Arrivals</Link>
-                <Link to="/products/categories" className="dropdown-item">Categories</Link>
+              <div style={{
+                position: 'absolute',
+                top: '100%',
+                left: '0',
+                background: 'white',
+                borderRadius: '0.25rem',
+                boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                overflow: 'hidden',
+                width: '200px',
+                zIndex: 10,
+              }}>
+                <DropdownLink to="/products">All Products</DropdownLink>
+                <DropdownLink to="/products/new">New Arrivals</DropdownLink>
+                <DropdownLink to="/products/categories">Smart Home</DropdownLink>
               </div>
             )}
           </div>
-          {/* Changed this section to show Login or Profile based on isLoggedIn */}
           {!isLoggedIn ? (
-            <Link to="/login" className="nav-link" onClick={() => setIsLoggedIn(true)}>
-              {/* Simulate login when clicked for this example */}
+            <NavLink to="/login" onClick={() => setIsLoggedIn(true)}>
               <User size={18} />
               <span>Login</span>
-            </Link>
+            </NavLink>
           ) : (
-            <Link to="/profile" className="nav-link">
+            <NavLink to="/profile">
               <User size={18} />
               <span>Profile</span>
-            </Link>
+            </NavLink>
           )}
-          <Link to="/cart" className="cart-button">
+          <Link to="/cart" style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.25rem',
+            background: 'white',
+            color: '#0099f7',
+            padding: '0.5rem 1rem',
+            borderRadius: '2rem',
+            textDecoration: 'none',
+            fontWeight: 'bold',
+            transition: 'all 0.3s ease',
+            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+          }}>
             <ShoppingCart size={18} />
             <span>Cart</span>
           </Link>
-          <button className="theme-toggle" onClick={() => setIsDarkMode(!isDarkMode)}>
-            {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
-          </button>
         </nav>
       </div>
-      <style>{`
-        .header {
-          background: linear-gradient(to right, #6d28d9, #4f46e5);
-          color: white;
-          padding: 1rem;
-          transition: all 0.3s ease;
-        }
-        .header.scrolled {
-          padding: 0.5rem 1rem;
-          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-        .container {
-          max-width: 1200px;
-          margin: 0 auto;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-        }
-        .logo-link {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-          color: white;
-          text-decoration: none;
-          font-size: 1.5rem;
-          font-weight: bold;
-        }
-        .logo-icon {
-          background-color: white;
-          color: #6d28d9;
-          border-radius: 50%;
-          padding: 0.25rem;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-        .nav {
-          display: flex;
-          align-items: center;
-          gap: 1rem;
-        }
-        .nav-link, .dropdown-button, .cart-button, .theme-toggle {
-          display: flex;
-          align-items: center;
-          gap: 0.25rem;
-          color: white;
-          text-decoration: none;
-          padding: 0.5rem;
-          border-radius: 0.25rem;
-          transition: background-color 0.3s ease, color 0.3s ease;
-        }
-        .nav-link:hover, .dropdown-button:hover, .cart-button:hover, .theme-toggle:hover {
-          background-color: rgba(255, 255, 255, 0.2);
-          color: #f0f0f0;
-        }
-        .dropdown {
-          position: relative;
-        }
-        .dropdown-button {
-          cursor: pointer;
-          background: none;
-          border: none;
-          font-size: 1rem;
-        }
-        .chevron {
-          transition: transform 0.3s ease;
-        }
-        .chevron.open {
-          transform: rotate(180deg);
-        }
-        .dropdown-menu {
-          position: absolute;
-          top: 100%;
-          left: 0;
-          background-color: white;
-          border-radius: 0.25rem;
-          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-          overflow: hidden;
-          width: 200px;
-          z-index: 10;
-        }
-        .dropdown-item {
-          display: block;
-          padding: 0.5rem 1rem;
-          color: #4a5568;
-          text-decoration: none;
-          transition: background-color 0.3s ease;
-        }
-        .dropdown-item:hover {
-          background-color: #f7fafc;
-        }
-        .cart-button {
-          background-color: white;
-          color: #6d28d9;
-        }
-        .theme-toggle {
-          background: none;
-          border: none;
-          cursor: pointer;
-          padding: 0.5rem;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-        @media (max-width: 768px) {
-          .container {
-            flex-direction: column;
-            align-items: flex-start;
-          }
-          .nav {
-            margin-top: 1rem;
-            flex-wrap: wrap;
-          }
-        }
-        body.dark-mode {
-          background-color: #1a202c;
-          color: #e2e8f0;
-        }
-        body.dark-mode .header {
-          background: linear-gradient(to right, #4c1d95, #3c366b);
-        }
-        body.dark-mode .dropdown-menu {
-          background-color: #2d3748;
-        }
-        body.dark-mode .dropdown-item {
-          color: #e2e8f0;
-        }
-        body.dark-mode .dropdown-item:hover {
-          background-color: #4a5568;
-        }
-        body.dark-mode .cart-button {
-          background-color: #2d3748;
-          color: #e2e8f0;
-        }
-      `}</style>
     </header>
   );
 };
 
+const NavLink = ({ to, children, ...props }) => (
+  <Link
+    to={to}
+    style={{
+      display: 'flex',
+      alignItems: 'center',
+      gap: '0.25rem',
+      color: 'white',
+      textDecoration: 'none',
+      padding: '0.5rem',
+      borderRadius: '0.25rem',
+      transition: 'background-color 0.3s ease',
+    }}
+    {...props}
+  >
+    {children}
+  </Link>
+);
+
+const DropdownLink = ({ to, children }) => (
+  <Link
+    to={to}
+    style={{
+      display: 'block',
+      padding: '0.5rem 1rem',
+      color: '#333',
+      textDecoration: 'none',
+      transition: 'background-color 0.3s ease',
+    }}
+  >
+    {children}
+  </Link>
+);
+
 export default Header;
-
-

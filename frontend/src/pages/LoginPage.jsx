@@ -85,7 +85,7 @@ const Login = () => {
           display: flex;
           align-items: center;
           justify-content: center;
-          background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+          background: linear-gradient(135deg,rgb(167, 206, 234) 0%,rgb(134, 205, 229) 100%);
           padding: 20px;
         }
 
@@ -127,7 +127,7 @@ const Login = () => {
         }
 
         input:focus {
-          border-color: #6366f1;
+          border-color:rgb(135, 202, 233);
           outline: none;
           box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
         }
@@ -135,7 +135,7 @@ const Login = () => {
         .login-button {
           width: 100%;
           padding: 12px;
-          background: #6366f1;
+          background:rgb(24, 145, 225);
           color: white;
           border: none;
           border-radius: 10px;
